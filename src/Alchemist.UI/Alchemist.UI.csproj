@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>AlchemistIcon.ico</ApplicationIcon>
+    <FileVersion>0.0.0.7</FileVersion>
+    <AssemblyVersion>0.0.0.6</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="AlchemistIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.17" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.0.1-ci662" />
+    <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
+    <PackageReference Include="Supabase" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\RedFox\src\cs\RedFox.Graphics3D.Translation\RedFox.Graphics3D.Translation.csproj" />
+    <ProjectReference Include="..\..\..\RedFox\src\cs\RedFox.Graphics3D\RedFox.Graphics3D.csproj" />
+    <ProjectReference Include="..\..\..\RedFox\src\cs\RedFox.UI\RedFox.UI.csproj" />
+    <ProjectReference Include="..\..\..\RedFox\src\cs\RedFox.Zenith\RedFox.Zenith.csproj" />
+    <ProjectReference Include="..\Alchemist.Scripting\Alchemist.Scripting.csproj" />
+    <ProjectReference Include="..\Alchemist\Alchemist.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LogSettings.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

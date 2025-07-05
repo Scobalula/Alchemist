@@ -1,0 +1,24 @@
+{
+  "profiles": {
+    "Alchemist.CLI": {
+      "commandName": "Project",
+      "commandLineArgs": "--skeleton-path \"Models\" --output-file \"vm_mpapa5_sprint_loop_grip.seanim\" --input-file vm_sm_mpapa5_idle.seanim --left-iktarget-bone-name \"tag_ik_loc_le_foregrip\" --right-iktarget-bone-name \"tag_ik_loc_ri\" --left-hand-pose-file vm_sm_mpapa5_pose_gripvert.seanim --right-hand-pose-file vm_sm_mpapa5_pose_r.seanim --additive-layer-file vm_sm_mpapa5_sprint_loop.seanim --additive-layer-file vm_sm_mpapa5_sprint_offset_additive.seanim"
+    },
+    "Profile 1": {
+      "commandName": "Project",
+      "commandLineArgs": "--skeleton-path \"C:\\Users\\Admin\\Downloads\\ppapa41_hero_skeleton2.semodel\" --output-file \"ggoo.seanim\" --input-file \"C:\\Users\\Admin\\Downloads\\s4_vm_sm_ppapa41_grip_extmag_reload_empty.seanim\" --left-iktarget-bone-name \"tag_ik_loc_le_foregrip\" --right-iktarget-bone-name \"tag_ik_loc_ri\" --left-hand-pose-file \"C:\\Users\\Admin\\Downloads\\s4_vm_sm_ppapa41_gripangled_pose.seanim\" --right-hand-pose-file \"C:\\Users\\Admin\\Downloads\\s4_vm_sm_ppapa41_gripstock_pose_r.seanim\""
+    },
+    "Profile 2": {
+      "commandName": "Project",
+      "commandLineArgs": "--skeleton-path \"Models\" --output-file \"vm_mpapa5_slide_in_air_grip.seanim\" --input-file vm_sm_mpapa5_idle.seanim --left-iktarget-bone-name \"tag_ik_loc_le_foregrip\" --right-iktarget-bone-name \"tag_ik_loc_ri\" --left-hand-pose-file vm_sm_mpapa5_pose_gripvert.seanim --right-hand-pose-file vm_sm_mpapa5_pose_r.seanim --gesture-layer-file \"vm_gesture_default_slide_in.seanim\" --gesture-layer-right-file \"vm_gesture_default_slide_in_rhand.seanim\""
+    },
+    "Profile 3": {
+      "commandName": "Project",
+      "commandLineArgs": "--skeleton-path \"C:\\Users\\Admin\\Downloads\\ppapa41_hero_skeleton.semodel\" --output-file \"laddo.seanim\" --input-file vm_sm_mpapa5_idle.seanim --left-iktarget-bone-name \"tag_ik_loc_le_foregrip\" --right-iktarget-bone-name \"tag_ik_loc_ri\" --left-hand-pose-file vm_sm_mpapa5_pose_gripvert.seanim --right-hand-pose-file vm_sm_mpapa5_pose_r.seanim --gesture-layer-file \"vm_gesture_default_slide_loop.seanim\" --gesture-layer-right-file \"vm_gesture_default_slide_loop_rhand.seanim\" --enable-left-hand-ik false --enable-left-hand-pose false"
+    },
+    "Profile 4": {
+      "commandName": "Project",
+      "commandLineArgs": "--skeleton-path \"Models\" --output-file \"vm_mpapa5_rps_grip.seanim\" --input-file vm_sm_mpapa5_idle.seanim --left-iktarget-bone-name \"tag_ik_loc_le_foregrip\" --right-iktarget-bone-name \"tag_ik_loc_ri\" --left-hand-pose-file vm_sm_mpapa5_pose_gripvert.seanim --right-hand-pose-file vm_sm_mpapa5_pose_r.seanim --gesture-layer-file \"vm_gesture_rps_rock.seanim\" --gesture-layer-right-file \"vm_gesture_rps_rock_rhand.seanim\""
+    }
+  }
+}

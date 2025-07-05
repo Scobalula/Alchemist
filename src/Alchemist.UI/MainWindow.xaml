@@ -1,0 +1,255 @@
+﻿<Window x:Class="Alchemist.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Alchemist.UI"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        Title="{Binding Title}"
+        KeyDown="WindowKeyDown"
+        Height="768" Width="1366" MinHeight="360" MinWidth="640">
+    <Window.Resources>
+        <local:AnimationLayerTypeConverter x:Key="SelectedLayerConverter"></local:AnimationLayerTypeConverter>
+        <local:PartTypeConverter x:Key="PartTypeConverter"></local:PartTypeConverter>
+    </Window.Resources>
+    <materialDesign:DialogHost DialogClosing="DialogHostDialogClosing" OpenDialogCommandDataContextSource="DialogHostInstance" DialogTheme="Inherit" Identifier="RootDialog">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <ToolBarTray IsLocked="True" Height="56" VerticalAlignment="Top">
+                <ToolBar ClipToBounds="False" Style="{StaticResource MaterialDesignToolBar}">
+                    <!-- Projects -->
+                    <Button Content="{materialDesign:PackIcon Kind=PackageDown}" ToolTip="Load project" Command="{Binding ImportProjectCommand}"/>
+                    <Button Content="{materialDesign:PackIcon Kind=PackageUp}" ToolTip="Save project" Command="{Binding SaveProjectCommand}"/>
+                    <Button Content="{materialDesign:PackIcon Kind=Package}" ToolTip="Save project to a new file" Command="{Binding SaveProjectAsCommand}"/>
+                    <Separator/>
+                    <!-- IO Group -->
+                    <Button Content="{materialDesign:PackIcon Kind=FileUpload}" ToolTip="Open animation/s" Command="{Binding AddAnimationsCommand}"/>
+                    <Button Content="{materialDesign:PackIcon Kind=FileDownload}" ToolTip="Save animation/s" Command="{Binding SaveAnimationsCommand}"/>
+                    <Button Content="{materialDesign:PackIcon Kind=FileRemove}" ToolTip="Remove animation/s" Command="{Binding RemoveAnimationsCommand}"/>
+                    <Button Content="{materialDesign:PackIcon Kind=Folder}" ToolTip="Set output folder for the selected animations" Command="{Binding SetOutputFolderCommand}"/>
+                    <Separator/>
+                    <!-- IK/Pose Info -->
+                    <Button Content="{materialDesign:PackIcon Kind=ArrowLeftBold}" ToolTip="Enable Left Hand IK/Pose" Command="{Binding ToggleLeftHandIKCommand}" CommandParameter="Enable"/>
+                    <Button Content="{materialDesign:PackIcon Kind=ArrowRightBold}" ToolTip="Enable Right Hand IK/Pose" Command="{Binding ToggleRightHandIKCommand}" CommandParameter="Enable"/>
+                    <Button Content="{materialDesign:PackIcon Kind=ArrowLeftBoldOutline}" ToolTip="Disable Left Hand IK/Pose" Command="{Binding ToggleLeftHandIKCommand}" CommandParameter="Disable"/>
+                    <Button Content="{materialDesign:PackIcon Kind=ArrowRightBoldOutline}" ToolTip="Disable Right Hand IK/Pose" Command="{Binding ToggleRightHandIKCommand}" CommandParameter="Disable"/>
+                    <Button Content="{materialDesign:PackIcon Kind=StepBackward}" ToolTip="Add prefix" Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" materialDesign:DialogHost.DialogClosingAttached="DialogHostDialogClosing">
+                        <Button.CommandParameter>
+                            <!-- TODO: Move to a UserControl -->
+                            <StackPanel Margin="16">
+                                <TextBlock Text="Add prefix to selected files"/>
+                                <TextBox x:Name="PrefixBox" Margin="0,8,0,0" HorizontalAlignment="Stretch"/>
+                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                    <Button Margin="0,8,8,0"
+                                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                            Content="ACCEPT"
+                                            IsDefault="True"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            CommandParameter="AcceptPrefix"/>
+                                    <Button Margin="0,8,8,0" 
+                                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                            Content="CANCEL"
+                                            IsCancel="True"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            CommandParameter="Decline"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Content="{materialDesign:PackIcon Kind=StepForward}" ToolTip="Add suffix" Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" materialDesign:DialogHost.DialogClosingAttached="DialogHostDialogClosing">
+                        <Button.CommandParameter>
+                            <!-- TODO: Move to a UserControl -->
+                            <StackPanel Margin="16">
+                                <TextBlock Text="Add suffix to selected files"/>
+                                <TextBox x:Name="SuffixBox" Margin="0,8,0,0" HorizontalAlignment="Stretch"/>
+                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                    <Button Margin="0,8,8,0"
+                                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                            Content="ACCEPT"
+                                            IsDefault="True"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            CommandParameter="AcceptSuffix"/>
+                                    <Button Margin="0,8,8,0" 
+                                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                            Content="CANCEL"
+                                            IsCancel="True"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            CommandParameter="Decline"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Content="{materialDesign:PackIcon Kind=HandBackLeft}" ToolTip="Set Left Pose File" Command="{Binding SetPoseFileCommand}" CommandParameter="Left"/>
+                    <Button Content="{materialDesign:PackIcon Kind=HandBackRight}" ToolTip="Set Right Pose File" Command="{Binding SetPoseFileCommand}" CommandParameter="Right"/>
+                    <Separator/>
+                    <!-- Layers -->
+                    <Button Content="{materialDesign:PackIcon Kind=FileUploadOutline}" ToolTip="Add animation layer/s" Command="{Binding AddLayerCommand}"/>
+                    <Button Content="{materialDesign:PackIcon Kind=FileRemoveOutline}" ToolTip="Remove animation layer/s" Command="{Binding RemoveLayerCommand}"/>
+                    <Separator/>
+                    <!-- Parts -->
+                    <Button Content="{materialDesign:PackIcon Kind=Bone}" ToolTip="Add part/s" Command="{Binding AddPartsCommand}"/>
+                    <Button Content="{materialDesign:PackIcon Kind=BoneOff}" ToolTip="Remove part/s" Command="{Binding RemovePartsCommand}"/>
+                    <Separator/>
+                    <!-- Misc -->
+                    <Button Content="{materialDesign:PackIcon Kind=Cog}" ToolTip="Open application settings" Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}">
+                        <Button.CommandParameter>
+                            <!-- TODO: Move to a UserControl -->
+                            <StackPanel Margin="16" Width="256">
+                                <TextBox materialDesign:HintAssist.Hint="Default Left Hand IK Start Bone" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding LeftIKStartBoneName}"/>
+                                <TextBox materialDesign:HintAssist.Hint="Default Left Hand IK Middle Bone" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding LeftIKMidBoneName}"/>
+                                <TextBox materialDesign:HintAssist.Hint="Default Left Hand IK End Bone" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding LeftIKEndBoneName}"/>
+                                <TextBox materialDesign:HintAssist.Hint="Default Left Hand IK Target Bone" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding LeftIKTargetBoneName}"/>
+                                <TextBox materialDesign:HintAssist.Hint="Default Right Hand IK Start Bone" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding RightIKStartBoneName}"/>
+                                <TextBox materialDesign:HintAssist.Hint="Default Right Hand IK Middle Bone" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding RightIKMidBoneName}"/>
+                                <TextBox materialDesign:HintAssist.Hint="Default Right Hand IK End Bone" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding RightIKEndBoneName}"/>
+                                <TextBox materialDesign:HintAssist.Hint="Default Right Hand IK Target Bone" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding RightIKTargetBoneName}"/>
+                                <TextBox materialDesign:HintAssist.Hint="Output File Prefix" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding OutputPrefix}"/>
+                                <TextBox materialDesign:HintAssist.Hint="Output File Suffix" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding OutputSuffix}"/>
+                                <CheckBox Content="Match old Call of Duty Games" IsChecked="{Binding MatchOldCallOfDuty}" Margin="0,12,0,0"/>
+                                <ComboBox Margin="0,8,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ItemsSource="{Binding OutputFormats}" SelectedItem="{Binding OutputFormat}"/>
+                                <Button Margin="0,8,0,0" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" Content="CLOSE" IsCancel="True" Style="{StaticResource MaterialDesignFlatButton}" CommandParameter="Decline"/>
+                            </StackPanel>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Content="{materialDesign:PackIcon Kind=Script}" ToolTip="Open experimental options window" Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" materialDesign:DialogHost.DialogClosing="DialogHostDialogClosing">
+                        <Button.CommandParameter>
+                            <!-- TODO: Move to a UserControl -->
+                            <StackPanel Margin="16">
+                                <!--<CheckBox Content="Enable Animation Trimming" IsChecked="{Binding EnableAnimationTrimming}"/>-->
+                                <ListBox x:Name="ScriptsListBox" Background="#30000000" SelectionMode="Multiple" ItemsSource="{Binding Scripts}" Width="192" Height="192"/>
+                                <Button Margin="0,8,0,0" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" Content="RUN" IsCancel="True" Style="{StaticResource MaterialDesignFlatButton}" CommandParameter="Run"/>
+                                <Button Margin="0,8,0,0" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" Content="CLOSE" IsCancel="True" Style="{StaticResource MaterialDesignFlatButton}" CommandParameter="Decline"/>
+                            </StackPanel>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Content="{materialDesign:PackIcon Kind=Information}" ToolTip="Open about window"/>
+                </ToolBar>
+            </ToolBarTray>
+            <TabControl Margin="0,56,0,0" materialDesign:ColorZoneAssist.Mode="PrimaryDark" Style="{StaticResource MaterialDesignFilledTabControl}">
+                <TabItem Header="Animations">
+                    <ListView x:Name="MainAnimationList" Visibility="{Binding IsVisible}" ItemsSource="{Binding Animations}" AllowDrop="True" Drop="ListViewDrop" SelectionChanged="ListViewSelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionMode="Extended">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignGridViewItem}">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="File" Width="{Binding FileColumnWith}">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBox Margin="0,4,0,0" materialDesign:HintAssist.Hint="File Path" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBox Margin="0,4,0,0" materialDesign:HintAssist.Hint="Left Pose Path" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding LeftHandPoseFile, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBox Margin="0,4,0,0" materialDesign:HintAssist.Hint="Right Pose Path" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding RightHandPoseFile, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="IK Settings" Width="{Binding IKSettingsColumnWith}">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBox Margin="0,4,0,0" materialDesign:HintAssist.Hint="Left Hand IK Target Bone Override" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding LeftIKTargetBoneName}"/>
+                                                <TextBox Margin="0,4,0,0" materialDesign:HintAssist.Hint="Right Hand IK Target Bone Override" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding RightIKTargetBoneName}"/>
+                                                <CheckBox Margin="0,12,0,0" Content="Enable Left Hand" IsChecked="{Binding EnableLeftHandIK}"/>
+                                                <CheckBox Margin="0,12,0,0" Content="Enable Right Hand" IsChecked="{Binding EnableRightHandIK}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Animation Layers" Width="{Binding LayersColumnWith, FallbackValue=600}">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <ListBox Height="160" ItemsSource="{Binding Layers}" Background="#20000000" SelectionMode="Extended" SelectionChanged="ListBoxSelectionChanged">
+                                                <ListBox.ItemContainerStyle>
+                                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                        <Setter Property="Background" Value="{Binding ColorBrush}"/>
+                                                    </Style>
+                                                </ListBox.ItemContainerStyle>
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,315,0" VerticalContentAlignment="Center"/>
+                                                            <ComboBox Width="100" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0,0,210,0" ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.LayerTypes}" SelectedIndex="{Binding Type, Converter={StaticResource SelectedLayerConverter}}"/>
+                                                            <TextBox materialDesign:HintAssist.Hint="Offset" Width="56" HorizontalAlignment="Right" Margin="0,0,149,0" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}"/>
+                                                            <Button HorizontalAlignment="Right" Margin="0,0,96,0" Content="{materialDesign:PackIcon Kind=ArrowUpBold}" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Move layer up" Command="{Binding MoveUpCommand}" CommandParameter="Up"/>
+                                                            <Button HorizontalAlignment="Right" Margin="0,0,48,0" Content="{materialDesign:PackIcon Kind=ArrowDownBold}" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Move layer down" Command="{Binding MoveDownCommand}" CommandParameter="Down"/>
+                                                            <Button HorizontalAlignment="Right" Content="{materialDesign:PackIcon Kind=Delete}" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Delete Layer" Command="{Binding DeleteCommand}" CommandParameter="Down"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Output Info" Width="{Binding OutputColumnWith}">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBox Margin="0,4,0,0" materialDesign:HintAssist.Hint="Output Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding OutputName, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBox Margin="0,4,0,0" materialDesign:HintAssist.Hint="Output Folder" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding OutputFolder, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBox Margin="0,4,0,0" materialDesign:HintAssist.Hint="Output Framerate" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding OutputFramerate, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <CheckBox Content="Use Experimental Features" IsChecked="{Binding UseExperimentalFeatures}" Margin="0,12,0,0"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </TabItem>
+                <TabItem Header="Parts">
+                    <ListView x:Name="MainModelList" Visibility="{Binding IsVisible}" ItemsSource="{Binding Parts}" SelectionChanged="ListViewSelectionChanged" AllowDrop="True" Drop="ModelListDrop" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionMode="Extended">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignGridViewItem}">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="File" Width="{Binding PartsFileColumnWith, FallbackValue=480}">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBox Margin="0,4,0,0" materialDesign:HintAssist.Hint="File Path" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding FilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Settings" Width="{Binding PartsSettingsWidth, FallbackValue=400}">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBox Margin="0,4,0,0" materialDesign:HintAssist.Hint="Parent Bone Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding ParentBoneTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <ComboBox Margin="0,4,0,0" Height="30" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.PartTypes}" SelectedIndex="{Binding Type, Converter={StaticResource PartTypeConverter}}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Sort" Width="{Binding PartsSortWidth, FallbackValue=400}">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button HorizontalAlignment="Right" Content="{materialDesign:PackIcon Kind=ArrowUpBold}" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Move layer up" Command="{Binding MoveUpCommand}" CommandParameter="Up"/>
+                                                <Button HorizontalAlignment="Right" Content="{materialDesign:PackIcon Kind=ArrowDownBold}" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Move layer down" Command="{Binding MoveDownCommand}" CommandParameter="Down"/>
+                                                <Button HorizontalAlignment="Right" Content="{materialDesign:PackIcon Kind=Delete}" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Delete Layer" Command="{Binding DeleteCommand}" CommandParameter="Down"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </materialDesign:DialogHost>
+</Window>
